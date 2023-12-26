@@ -10,7 +10,7 @@ def selecionarEmpresa(empresa):
 
     pyautogui.hotkey('alt', 'p')
     time.sleep(.5)
-    for i in range(4):
+    for i in range(6):
         pyautogui.press('up')
         time.sleep(.01)
     time.sleep(1)
