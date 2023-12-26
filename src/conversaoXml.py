@@ -1,7 +1,8 @@
 import gzip
 import base64
+import json
 
-def converteGzipParaXml(caminhoArquivoGzip):
+def converteGzipParaXml(caminhoArquivoGzip, nomeArquivoXml):
     # lendo arquivo gzip
     with gzip.open(caminhoArquivoGzip, 'rt') as arquivo:
         conteudoBase64 = arquivo.read()
@@ -12,9 +13,13 @@ def converteGzipParaXml(caminhoArquivoGzip):
     conteudoXml = conteudoDescomprimido.decode('utf-8')
 
     # criando arquivo XML
-    with open('arquivo2.xml', 'w', encoding='utf-8') as arquivo:
+    with open("../config/config.json", "r", encoding="utf-8") as file:
+        sensitive_data = json.load(file)
+        pastaXml = sensitive_data["enderecoXml"]
+
+    caminhoArquivoXml = f'{pastaXml}{nomeArquivoXml}.xml'
+
+    with open(caminhoArquivoXml, 'w', encoding='utf-8') as arquivo:
         arquivo.write(conteudoXml)
 
-
-nome_arquivo_gzip = 'C:\\Users\\guilherme.rabelo\\Documents\\RPA_docs\\EntradaDaNota\\newGzip.txt.gz'
-converteGzipParaXml(nome_arquivo_gzip)
+    return caminhoArquivoXml
