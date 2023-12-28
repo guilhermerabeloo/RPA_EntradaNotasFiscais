@@ -1,8 +1,9 @@
 from pywinauto.application import Application
+from preencheItem import preencheItem
 import pyautogui
 import time
 
-def preenchimentoCapaNota(caminhoDoArquivo):
+def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento, departamento, almoxarifado):
     # Colocando janela em foco
     app = Application(backend="win32").connect(class_name="FNWND3115")
     main_window = app.top_window()
@@ -15,6 +16,7 @@ def preenchimentoCapaNota(caminhoDoArquivo):
     pyautogui.press('down')
     time.sleep(.5)
     pyautogui.press('ENTER')
+    time.sleep(1)
     btnSair = app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0)
     btnSair.wait('visible', timeout=10)
 
@@ -31,14 +33,52 @@ def preenchimentoCapaNota(caminhoDoArquivo):
     telaImportar.ExportarImportarXmlNfe.child_window(class_name="Edit").type_keys(caminhoDoArquivo)
     time.sleep(1)
     telaImportar.ExportarImportarXmlNfe.child_window(title="&Carregar", class_name="Button").wrapper_object().click_input()
+    time.sleep(7)
+    elementosExportarImportar = telaImportar.ExportarImportarXmlNfe.children()
+    elementosExportarImportar[8].click_input()
+    for i in range(3):
+        time.sleep(.01)
+        pyautogui.press('BACKSPACE')
+    time.sleep(.01)
+    pyautogui.press('DELETE')
+    time.sleep(.01)
+    pyautogui.write(naturezaOperacao)
     time.sleep(1)
+    pyautogui.press('TAB')
+    time.sleep(.5)
+    pyautogui.write(documento)
+    time.sleep(.5)
+    pyautogui.press('TAB')
+    time.sleep(.5)
+    pyautogui.write(departamento)
+    time.sleep(.5)
+    pyautogui.press('TAB')
+    time.sleep(.5)
+    pyautogui.write(almoxarifado)
+    time.sleep(.5)
+
     telaImportar.ExportarImportarXmlNfe.child_window(title="&Importar", class_name="Button").wrapper_object().click_input()
-    time.sleep(3)
+
+    time.sleep(8)
     importar = Application(backend="win32").connect(title="Importação XML Nota Fiscal de Entrada.")
     importar_window = importar.top_window()
     importar_window.set_focus()
     time.sleep(1)
-    importar.ImportacaoXmlNotaFiscalDeEntrada.child_window(class_name="Edit").wrapper_object().click_input()
 
+    # preenchendo informacao do item
+    # preencheItem(idNota)
+    time.sleep(1)
+    importar.importacaoXmlNotaFiscalDeEntrada.child_window(title="OK", class_name="Button").wrapper_object().click_input()
+    
+    btnSair.wait('visible', timeout=10)
 
-# preenchimentoCapaNota("C:\\Users\\guilherme.rabelo\\Documents\\RPA_docs\\EntradaDaNota\\arquivo.xml")
+    app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="Conta Gerencial:", class_name="Button").click_input()
+    time.sleep(.01)
+    app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="2.01.02.   ", class_name="PBEDIT115").click_input()
+    time.sleep(.01)
+    pyautogui.press('TAB')
+    time.sleep(.01)
+    pyautogui.hotkey('ctrl', 'end')
+    time.sleep(.01)
+    pyautogui.write(' - REALIZADO POR RPA')
+

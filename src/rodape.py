@@ -93,5 +93,3 @@ def preencheRodape(idNota):
     app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[29].click_input()
     time.sleep(1)
     pyautogui.hotkey('alt', 'v')
-
-preencheRodape(1)
