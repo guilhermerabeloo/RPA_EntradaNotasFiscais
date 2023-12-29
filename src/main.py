@@ -2,6 +2,7 @@ from login import loginDealernet
 from sql import sqlPool
 from mudarEmpresa import selecionarEmpresa
 from rodape import preencheRodape
+from tabulacaoImpostos import tabulaItens
 from entradaDaNota import preenchimentoCapaNota
 from conversaoXml import converteGzipParaXml
 import warnings
@@ -27,7 +28,6 @@ empresas = sqlPool("SELECT", """
                     FROM [BD_MTZ_FOR]..ger_emp
                     WHERE 
                         emp_cd IN ('01')
-                        --emp_cd NOT IN ('20', '10', '07', '06', '05', '08', '09')
                     ORDER BY emp_ds
                 """)
 
@@ -54,6 +54,7 @@ for empresa in empresas:
         nome_arquivo_xml = converteGzipParaXml(dados['gzip'], dados['numeroNf'])
         preenchimentoCapaNota(nome_arquivo_xml, dados['idNota'], dados['natureza'], dados['tipoDocumento'], dados['departamento'], dados['almoxarifado'])
         preencheRodape(dados['idNota'])
+        tabulaItens(dados['idNota'])
         
 # subprocess.run(["powershell", "-Command", "Stop-process -Name scr"], shell=True)
 
