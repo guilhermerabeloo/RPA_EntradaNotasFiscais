@@ -4,7 +4,7 @@ import pyautogui
 import time
 
 def tabulaItens(idNota):
-    app = Application(backend="win32").connect(class_name="FNWND3115")
+    app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
     main_window = app.top_window()
     main_window.set_focus()
     time.sleep(1)
@@ -26,13 +26,13 @@ def tabulaItens(idNota):
 
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title=f"{notaAtual}", class_name="PBEDIT115", found_index=0).click_input()
         time.sleep(.3)
-        for i in range(15):
-            time.sleep(.1)
+        for _ in range(15):
+            time.sleep(.01)
             pyautogui.press('BACKSPACE')
         pyautogui.write(desenho)
 
         for i in range(3):
-            time.sleep(.3)
+            time.sleep(.1)
             pyautogui.press('TAB')
         pyautogui.press('SPACE')
 
@@ -41,7 +41,7 @@ def tabulaItens(idNota):
         time.sleep(2)
 
         for i in range(50):
-            time.sleep(.1)
+            time.sleep(.01)
             pyautogui.press('TAB')
 
         pyautogui.hotkey('alt', 'O')

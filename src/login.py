@@ -6,9 +6,8 @@ import subprocess
 def loginDealernet(modulo, senha):
     comando_powershell = f"start {modulo}"
     subprocess.run(["powershell", "-Command", comando_powershell], capture_output=True, text=True)
-    time.sleep(5)
 
-    telaLogin = Application(backend="win32").connect(title='Segurança')
+    telaLogin = Application(backend="win32").connect(title='Segurança', timeout=60)
     time.sleep(2)
     telaLogin.Seguranca.set_focus()
 

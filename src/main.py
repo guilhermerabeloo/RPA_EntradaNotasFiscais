@@ -8,7 +8,9 @@ from conversaoXml import converteGzipParaXml
 import warnings
 import json
 import subprocess
-import time
+import datetime
+
+print(datetime.datetime.now())
 
 warnings.filterwarnings("ignore", category=UserWarning)
 with open("../config/config.json", "r", encoding="utf-8") as file:
@@ -23,7 +25,7 @@ with open("../config/config.json", "r", encoding="utf-8") as file:
 empresas = sqlPool("SELECT", """
                     SELECT 
                         emp_cd,
-                        emp_ds,
+                        REPLACE(emp_ds, 'LUIS', 'LUÍS') AS emp_ds,
                         emp_banco
                     FROM [BD_MTZ_FOR]..ger_emp
                     WHERE 
@@ -55,6 +57,8 @@ for empresa in empresas:
         preenchimentoCapaNota(nome_arquivo_xml, dados['idNota'], dados['natureza'], dados['tipoDocumento'], dados['departamento'], dados['almoxarifado'])
         preencheRodape(dados['idNota'])
         tabulaItens(dados['idNota'])
-        
-# subprocess.run(["powershell", "-Command", "Stop-process -Name scr"], shell=True)
+
+print(datetime.datetime.now())
+
+subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
 

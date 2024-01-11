@@ -3,11 +3,6 @@ import base64
 import json
 
 def converteGzipParaXml(conteudoGzip, nomeArquivoXml):
-    # lendo arquivo gzip
-    # with gzip.open(caminhoArquivoGzip, 'rt') as arquivo:
-    #     conteudoBase64 = arquivo.read()
-    #     print(conteudoBase64)
-
     # extraindo conteudo de base64 para string
     conteudoBytes = base64.b64decode(conteudoGzip)
     conteudoDescomprimido = gzip.decompress(conteudoBytes)
