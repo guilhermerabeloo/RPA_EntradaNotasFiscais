@@ -34,12 +34,11 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
     telaImportar.ExportarImportarXmlNfe.child_window(title="&Carregar", class_name="Button").wrapper_object().click_input()
     time.sleep(7)
     elementosExportarImportar = telaImportar.ExportarImportarXmlNfe.children()
-    elementosExportarImportar[8].click_input()
-    for _ in range(3):
-        time.sleep(.01)
-        pyautogui.press('BACKSPACE')
-    time.sleep(.01)
+    elementosExportarImportar[8].double_click()
+    time.sleep(.1) 
     pyautogui.press('DELETE')
+    time.sleep(.1) 
+    
     time.sleep(.01)
     pyautogui.write(naturezaOperacao)
     time.sleep(1)
@@ -64,10 +63,9 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
     time.sleep(1)
 
     # preenchendo informacao do item
-    # preencheItem(idNota)
+    # preencheItem(idNota)                  
     time.sleep(1)
     importar.importacaoXmlNotaFiscalDeEntrada.child_window(title="OK", class_name="Button").wrapper_object().click_input()
-    # btnSair.wait('visible', timeout=10)
     app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0, timeout=60)
 
     app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="Conta Gerencial:", class_name="Button").click_input()

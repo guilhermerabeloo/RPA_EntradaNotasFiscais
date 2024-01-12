@@ -24,14 +24,13 @@ def tabulaItens(idNota):
     for item in itens:
         desenho =  item[0]
 
-        app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title=f"{notaAtual}", class_name="PBEDIT115", found_index=0).click_input()
-        time.sleep(.3)
-        for _ in range(15):
-            time.sleep(.01)
-            pyautogui.press('BACKSPACE')
+        app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title=f"{notaAtual}", class_name="PBEDIT115", found_index=0).double_click()
+        time.sleep(.1)
+        pyautogui.press('DELETE')
+        time.sleep(.1)
         pyautogui.write(desenho)
 
-        for i in range(3):
+        for _ in range(3):
             time.sleep(.1)
             pyautogui.press('TAB')
         pyautogui.press('SPACE')

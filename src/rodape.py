@@ -1,4 +1,5 @@
 from pywinauto.application import Application
+from preencheModoPgt import preenchimentoModoPgt
 from sql import sqlPool
 import pyautogui
 import time
@@ -12,7 +13,20 @@ def preencheRodape(idNota):
                 tipo_obrigacao,
                 moeda_correcao,
                 moeda_juros,
-                agente_portador
+                agente_portador,
+                tipo_preenchimento,
+                mod_pagamento,
+                tipo_cc,
+                banco,
+                agencia,
+                conta,
+                ident,
+                codigo_barras,
+                tipo_pix,
+                chave_pix,
+                transf_pix,
+                tipo_pix_qrcode,
+                qrcode_pix
             FROM nfemaster.DWIN_entradaNFeProdutoXML_rodape
             WHERE
                 id_nota = {idNota}
@@ -49,45 +63,66 @@ def preencheRodape(idNota):
         moedaCorrecao = parcela[4]
         moedaJuros = parcela[5]
         agentePortador = parcela[6]
+        infoPagamento = {
+            'tipoPrenchimento': parcela[7],
+            'modPagamento': parcela[8],
+            'tipoConta': parcela[9],
+            'banco': parcela[10],
+            'agencia': parcela[11],
+            'conta': parcela[12],
+            'indent': parcela[13],
+            'codigoBarras': parcela[14],
+            'tipoPix': parcela[15],
+            'chavePix': parcela[16],
+            'transfPix': parcela[17],
+            'tipoPixQrcode': parcela[18],
+            'qrcoodePix': parcela[19]
+        }
 
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.press('TAB')
-        time.sleep(.1) 
+        time.sleep(.3)      
         pyautogui.write(tipoObrigacao)
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.press('TAB')
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.press('TAB')
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.write(vencimento)
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.press('TAB')
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.write(valor)
-        for _ in range(4):
-            time.sleep(.1)
-            pyautogui.press('TAB')
-        time.sleep(.1) 
+        time.sleep(.3) 
+        pyautogui.press('TAB')
+        time.sleep(.3) 
+        pyautogui.press('TAB')
+        time.sleep(.3) 
+        pyautogui.press('TAB')
+        time.sleep(.3) 
+
+        preenchimentoModoPgt(infoPagamento)
+
+        time.sleep(2) 
         pyautogui.write(moedaCorrecao)
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.press('TAB')
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.press('TAB')
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.write(moedaJuros)
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.press('TAB')
-        time.sleep(.1) 
-        print(agentePortador)
+        time.sleep(.3) 
         pyautogui.write(agentePortador)
-        time.sleep(.1) 
+        time.sleep(.3) 
         pyautogui.hotkey('alt', 'O')
-        time.sleep(.1) 
+        time.sleep(1) 
         pyautogui.press('TAB')
-        time.sleep(.1) 
+        time.sleep(.3)  
         pyautogui.press('TAB')
 
-    time.sleep(.1) 
+    time.sleep(.3) 
     pyautogui.hotkey('alt', 'v')
 
     time.sleep(1)

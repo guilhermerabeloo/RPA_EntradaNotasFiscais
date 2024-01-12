@@ -60,5 +60,5 @@ for empresa in empresas:
 
 print(datetime.datetime.now())
 
-subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
+# subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
 
