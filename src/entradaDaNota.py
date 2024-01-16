@@ -18,8 +18,7 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         time.sleep(.5)
         pyautogui.press('ENTER')
         time.sleep(1)
-        btnSair = app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0, timeout=60)
-        # btnSair.wait('visible', timeout=10)
+        app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0, timeout=60)
 
         # Entrando na tela de importacao do XML
         for i in range(2):
@@ -64,7 +63,7 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         time.sleep(1)
 
         # preenchendo informacao do item
-        # preencheItem(idNota)                  
+        # preencheItem(idNota) USAR ISTO EM PRODUCAO                 
         time.sleep(1)
         importar.importacaoXmlNotaFiscalDeEntrada.child_window(title="OK", class_name="Button").wrapper_object().click_input()
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0, timeout=60)

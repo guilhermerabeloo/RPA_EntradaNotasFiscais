@@ -13,15 +13,20 @@ import time
 
 
 warnings.filterwarnings("ignore", category=UserWarning)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('../log/logsDeErro.log'), 
-    ]
-)
 
-print(datetime.datetime.now())
+execucao_handler = logging.FileHandler('../log/logsDeExecucao.log')
+execucao_handler.setLevel(logging.INFO)
+execucao_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+erro_handler = logging.FileHandler('../log/logsDeErro.log')
+erro_handler.setLevel(logging.ERROR)
+erro_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    handlers=[execucao_handler, erro_handler]
+)
+logger = logging.getLogger(__name__)
+
 with open("../config/config.json", "r", encoding="utf-8") as file:
     sensitive_data = json.load(file)
     dealernetLogin = sensitive_data["acessoDealernet"]
@@ -30,6 +35,7 @@ with open("../config/config.json", "r", encoding="utf-8") as file:
     dealernetModulo = sensitive_data['modulosDealernet']['Estoque']
     executavel = dealernetModulo['executavel']
 
+logger.info("=-=-=-=-=-=-=-=-INICIO DA EXECUCAO=-=-=-=-=-=-=-=-")
 retornoNota = sqlPool('SELECT', f"""
                 SELECT TOP 1
                     NF.* 
@@ -60,15 +66,26 @@ if len(retornoNota):
     }
         
     try: 
+        logger.info(f'ID {dados["idNota"]} - Realizando login no Dealernet')
         loginDealernet(executavel, empresa, senha)
+
+        logger.info(f'ID {dados["idNota"]} - Realizando conversao de XML')
         nome_arquivo_xml = converteGzipParaXml(dados['gzip'], dados['numeroNf'])
+
+        logger.info(f'ID {dados["idNota"]} - Realizando preenchimento da capa da nota')
         preenchimentoCapaNota(nome_arquivo_xml, dados['idNota'], dados['natureza'], dados['tipoDocumento'], dados['departamento'], dados['almoxarifado'])
+        
+        logger.info(f'ID {dados["idNota"]} - Realizando preenchimento do rodape')
         preencheRodape(dados['idNota'])
+
+        logger.info(f'ID {dados["idNota"]} - Realizando tabulacao dos itens')
         tabulaItens(dados['idNota'])
 
         sqlPool("INSERT", f"""
                 EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'S', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '1'
         """)
+
+        logger.info("=-=-=-=-=-=-=-=-FIM DA EXECUCAO=-=-=-=-=-=-=-=-\n")
         
     except Exception as err:
         sqlPool("INSERT", f"""
@@ -79,13 +96,12 @@ if len(retornoNota):
         subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
         time.sleep(7)
         
+        logger.info("=-=-=-=-=-=-=-=-FIM DA EXECUCAO=-=-=-=-=-=-=-=-")
 
 else:
     logging.info(f'Nada para integrar')
     print('Nada para integrar')
     subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
-
-print(datetime.datetime.now())
 
 subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
 

@@ -69,8 +69,3 @@ def preenchimentoModoPgt(infoPagamento):
         campos[43].click_input()
     except Exception as err:
         raise Exception(f'Erro ao preencher modo de pagamento: {err}')
-
-# rodape = Application(backend="win32").connect(class_name="FNWND3115", timeout=5)
-# campos = rodape.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()
-# for campo in campos:
-#     print(campo)

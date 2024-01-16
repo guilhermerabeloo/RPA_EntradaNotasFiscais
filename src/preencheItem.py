@@ -33,7 +33,7 @@ def preencheItem(idNota):
             pyautogui.press('TAB')
 
             # preenchimento de pedido
-            # pyautogui.write(pedido)
+            # pyautogui.write(pedido) USAR ISSO EM PRODUCAO
             pyautogui.write('0000000')
     except Exception as err:
         raise Exception(f'Erro ao preencher itens: {err}')

@@ -133,4 +133,3 @@ def preencheRodape(idNota):
     except Exception as err:
         raise Exception(f'Erro ao preencher rodapé da nota: {err}')
     
-# preencheRodape(1)
