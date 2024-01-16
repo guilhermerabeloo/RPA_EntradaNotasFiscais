@@ -1,6 +1,5 @@
 from login import loginDealernet
 from sql import sqlPool
-from mudarEmpresa import selecionarEmpresa
 from rodape import preencheRodape
 from tabulacaoImpostos import tabulaItens
 from entradaDaNota import preenchimentoCapaNota
@@ -9,10 +8,20 @@ import warnings
 import json
 import subprocess
 import datetime
+import logging
+import time
 
-print(datetime.datetime.now())
 
 warnings.filterwarnings("ignore", category=UserWarning)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('../log/logsDeErro.log'), 
+    ]
+)
+
+print(datetime.datetime.now())
 with open("../config/config.json", "r", encoding="utf-8") as file:
     sensitive_data = json.load(file)
     dealernetLogin = sensitive_data["acessoDealernet"]
@@ -21,44 +30,62 @@ with open("../config/config.json", "r", encoding="utf-8") as file:
     dealernetModulo = sensitive_data['modulosDealernet']['Estoque']
     executavel = dealernetModulo['executavel']
 
-# loginDealernet(executavel, senha)
-empresas = sqlPool("SELECT", """
-                    SELECT 
-                        emp_cd,
-                        REPLACE(emp_ds, 'LUIS', 'LUÍS') AS emp_ds,
-                        emp_banco
-                    FROM [BD_MTZ_FOR]..ger_emp
-                    WHERE 
-                        emp_cd IN ('01')
-                    ORDER BY emp_ds
+retornoNota = sqlPool('SELECT', f"""
+                SELECT TOP 1
+                    NF.* 
+                    , REPLACE(E.emp_ds, 'LUIS', 'LUÍS') AS Empresa
+                FROM [nfemaster].[DWIN_entradaNFeProdutoXML] AS NF
+                inner join [BD_MTZ_FOR]..ger_emp AS E ON E.emp_cd = NF.codigo_empresa
+                WHERE
+                      --integrado = 'E'
+                    integrado is null OR integrado NOT IN ('S', 'E')
+                ORDER BY NF.data_insert                
                 """)
 
-for empresa in empresas:
-    codEmpresa = empresa[0]
-    empresa = empresa[1]
-    notas = sqlPool('SELECT', f"SELECT * FROM DIA_Automate.nfemaster.DWIN_entradaNFeProdutoXML WHERE codigo_empresa = '{codEmpresa}'")
+if len(retornoNota):
+    nota = retornoNota[0]
+    codEmpresa = nota[2]
+    empresa = nota[13]
 
-    if len(notas):
-        # selecionarEmpresa(empresa)
-        for nota in notas:
-            dados = {
-                'idNota': nota[0],
-                'numeroNf': nota[1],
-                'cnpj': nota[3],
-                'gzip': nota[4],
-                'codFornecedor': nota[5],
-                'natureza': nota[6],
-                'tipoDocumento': nota[7],
-                'departamento': nota[8],
-                'almoxarifado': nota[9]
-            }
-            
+    dados = {
+        'idNota': nota[0],
+        'numeroNf': nota[1],
+        'cnpj': nota[3],
+        'gzip': nota[4],
+        'codFornecedor': nota[5],
+        'natureza': nota[6],
+        'tipoDocumento': nota[7],
+        'departamento': nota[8],
+        'almoxarifado': nota[9]
+    }
+        
+    try: 
+        loginDealernet(executavel, empresa, senha)
         nome_arquivo_xml = converteGzipParaXml(dados['gzip'], dados['numeroNf'])
         preenchimentoCapaNota(nome_arquivo_xml, dados['idNota'], dados['natureza'], dados['tipoDocumento'], dados['departamento'], dados['almoxarifado'])
         preencheRodape(dados['idNota'])
         tabulaItens(dados['idNota'])
 
+        sqlPool("INSERT", f"""
+                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'S', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '1'
+        """)
+        
+    except Exception as err:
+        sqlPool("INSERT", f"""
+                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'E', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '0'
+        """)
+
+        logging.info(f'NOTA {dados['numeroNf']} - ERRO: {err}')
+        subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
+        time.sleep(7)
+        
+
+else:
+    logging.info(f'Nada para integrar')
+    print('Nada para integrar')
+    subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
+
 print(datetime.datetime.now())
 
-# subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
+subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
 
