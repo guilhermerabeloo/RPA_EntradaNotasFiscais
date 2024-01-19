@@ -7,7 +7,6 @@ from conversaoXml import converteGzipParaXml
 import warnings
 import json
 import subprocess
-import datetime
 import logging
 import time
 
@@ -43,8 +42,7 @@ retornoNota = sqlPool('SELECT', f"""
                 FROM [nfemaster].[DWIN_entradaNFeProdutoXML] AS NF
                 inner join [BD_MTZ_FOR]..ger_emp AS E ON E.emp_cd = NF.codigo_empresa
                 WHERE
-                      --integrado = 'E'
-                    integrado is null OR integrado NOT IN ('S', 'E')
+                    integrado = 'P'
                 ORDER BY NF.data_insert                
                 """)
 
@@ -92,15 +90,15 @@ if len(retornoNota):
                 EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'E', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '0'
         """)
 
-        logging.info(f'NOTA {dados['numeroNf']} - ERRO: {err}')
+        logging.error(f'NOTA {dados['numeroNf']} - ERRO: {err}')
         subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
         time.sleep(7)
         
-        logger.info("=-=-=-=-=-=-=-=-FIM DA EXECUCAO=-=-=-=-=-=-=-=-")
+        logger.info("=-=-=-=-=-=-=-=-FIM DA EXECUCAO=-=-=-=-=-=-=-=-\n")
 
 else:
     logging.info(f'Nada para integrar')
-    print('Nada para integrar')
+    logger.info("=-=-=-=-=-=-=-=-FIM DA EXECUCAO=-=-=-=-=-=-=-=-\n")
     subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
 
 subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)

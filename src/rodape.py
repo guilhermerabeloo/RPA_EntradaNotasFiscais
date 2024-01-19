@@ -79,10 +79,9 @@ def preencheRodape(idNota):
                 'tipoPixQrcode': parcela[18],
                 'qrcoodePix': parcela[19]
             }
-
-            time.sleep(.3) 
-            pyautogui.press('TAB')
-            time.sleep(.3)      
+      
+            app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[53].click_input()
+            time.sleep(2)
             pyautogui.write(tipoObrigacao)
             time.sleep(.3) 
             pyautogui.press('TAB')
@@ -102,26 +101,28 @@ def preencheRodape(idNota):
             pyautogui.press('TAB')
             time.sleep(.3) 
 
-            preenchimentoModoPgt(infoPagamento)
+            # preenchimentoModoPgt(infoPagamento)
 
+            time.sleep(2)
+            app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[43].click_input()
+            time.sleep(2)
             pyautogui.write(moedaCorrecao)
+            time.sleep(.3) 
             pyautogui.press('TAB')
             time.sleep(2)
             app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[38].click_input()
             time.sleep(2) 
             pyautogui.write(moedaJuros) 
+            time.sleep(.3) 
             pyautogui.press('TAB')
             time.sleep(2)                   
             app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[50].click_input()
             time.sleep(2) 
             pyautogui.write(agentePortador)
+            time.sleep(.3) 
             pyautogui.press('TAB')
             time.sleep(2) 
             pyautogui.hotkey('alt', 'O')
-            time.sleep(2) 
-            pyautogui.press('TAB')
-            time.sleep(2)  
-            pyautogui.press('TAB')
 
         time.sleep(2)
         pyautogui.hotkey('alt', 'v')
