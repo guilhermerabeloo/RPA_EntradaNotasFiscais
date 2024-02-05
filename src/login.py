@@ -24,6 +24,6 @@ def loginDealernet(modulo, empresa, senha):
 
         time.sleep(1)
         telaLogin.Seguranca.child_window(title="&OK", class_name="Button").wrapper_object().click_input()
-        time.sleep(5)
+        time.sleep(10)
     except Exception as err:
         raise Exception(f'Erro ao fazer login: {err}')

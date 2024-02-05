@@ -41,7 +41,7 @@ def tabulaItens(idNota):
             time.sleep(2)
 
             for i in range(50):
-                time.sleep(.01)
+                time.sleep(.2)
                 pyautogui.press('TAB')
 
             
