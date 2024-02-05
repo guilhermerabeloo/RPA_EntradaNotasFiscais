@@ -1,7 +1,9 @@
 from pywinauto.application import Application
 from preencheItem import preencheItem
+from searchSelect import selecionaOptionSelect
 import pyautogui
 import time
+
 
 def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento, departamento, almoxarifado):
     try:
@@ -48,9 +50,8 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         time.sleep(.5)
         pyautogui.press('TAB')
         time.sleep(.5)
-        pyautogui.write(departamento)
-        time.sleep(.5)
-        pyautogui.press('TAB')
+        campoDepartamento = telaImportar.ExportarImportarXmlNfe.children()[13]
+        selecionaOptionSelect(campoDepartamento, departamento)
         time.sleep(.5)
         pyautogui.write(almoxarifado)
         time.sleep(.5)
@@ -70,8 +71,8 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
 
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="Conta Gerencial:", class_name="Button").click_input()
         time.sleep(.01)
-        app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="2.01.02.   ", class_name="PBEDIT115").click_input()
-        time.sleep(.01)
+        app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[40].click_input()
+        time.sleep(1)
         pyautogui.press('TAB')
         time.sleep(.01)
         pyautogui.hotkey('ctrl', 'end')

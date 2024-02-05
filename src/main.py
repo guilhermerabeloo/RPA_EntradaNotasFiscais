@@ -37,19 +37,34 @@ with open("../config/config.json", "r", encoding="utf-8") as file:
 logger.info("=-=-=-=-=-=-=-=-INICIO DA EXECUCAO=-=-=-=-=-=-=-=-")
 retornoNota = sqlPool('SELECT', f"""
                 SELECT TOP 1
-                    NF.* 
+                    NF.id
+                    , NF.numero_nf
+                    , NF.codigo_empresa
+                    , NF.cnpj_fornecedor
+                    , NF.xml_gzip
+                      
+                    , NF.codigo_fornecedor
+                    , NF.natureza_operacao
+                    , NF.tipo_documento
+                    , REPLACE(NF.departamento, '>', '> ') AS departamento
+                    , NF.almoxarifado
+                    , NF.integrado
+                    , NF.data_integrado
+                    , NF.data_insert
+                    , NF.integracao_erro
                     , REPLACE(E.emp_ds, 'LUIS', 'LUÍS') AS Empresa
                 FROM [nfemaster].[DWIN_entradaNFeProdutoXML] AS NF
                 inner join [BD_MTZ_FOR]..ger_emp AS E ON E.emp_cd = NF.codigo_empresa
                 WHERE
-                    integrado = 'P'
-                ORDER BY NF.data_insert                
+                        id = 16
+                    --integrado = 'P'
+                ORDER BY NF.data_insert                  
                 """)
 
 if len(retornoNota):
     nota = retornoNota[0]
     codEmpresa = nota[2]
-    empresa = nota[13]
+    empresa = nota[14]
 
     dados = {
         'idNota': nota[0],

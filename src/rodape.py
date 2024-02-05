@@ -86,7 +86,9 @@ def preencheRodape(idNota):
             time.sleep(.3) 
             pyautogui.press('TAB')
             time.sleep(.3) 
-            pyautogui.press('TAB')
+            app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[56].double_click()
+            time.sleep(.3) 
+            pyautogui.press('DELETE')
             time.sleep(.3) 
             pyautogui.write(vencimento)
             time.sleep(.3) 
@@ -133,4 +135,3 @@ def preencheRodape(idNota):
         pyautogui.hotkey('alt', 'v')
     except Exception as err:
         raise Exception(f'Erro ao preencher rodapé da nota: {err}')
-    
