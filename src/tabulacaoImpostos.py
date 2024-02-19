@@ -48,8 +48,16 @@ def tabulaItens(idNota):
             time.sleep(2)
             pyautogui.hotkey('alt', 'O')
             time.sleep(2)
-            pyautogui.hotkey('alt', 'C')
-            # pyautogui.hotkey('alt', 'O') ATIVAR ESSA LINHA EM PRODUCAO
+            pyautogui.hotkey('alt', 'O') #ATIVAR ESSA LINHA EM PRODUCAO
+            try:
+                telaAtencao = Application(backend="win32").connect(title="Atenção", timeout=5)
+
+                infoTelaAtencao = telaAtencao.Atencao.child_window(title="Valor digitado do ICMS não retido pelo Fornecedor difere do Valor calculado. Confirma o valor digitado?", class_name="Edit")
+                if infoTelaAtencao.is_visible():
+                    telaAtencao.Atencao.child_window(title="&Sim", class_name="Button").click_input()
+
+            except Exception as e:
+                pass
             notaAtual = desenho
 
         for _ in range(6):

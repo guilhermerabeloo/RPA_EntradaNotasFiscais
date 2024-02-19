@@ -21,7 +21,7 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         pyautogui.press('ENTER')
         time.sleep(1)
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0, timeout=60)
-
+   
         # Entrando na tela de importacao do XML
         for i in range(2):
             pyautogui.press('TAB')
@@ -29,6 +29,8 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         pyautogui.press('ENTER')
         
         telaImportar = Application(backend="win32").connect(title="Exportar/Importar .XML NFE(w_imp_exp_nfe)", timeout=60)
+        telaImportar.ExportarImportarXmlNfe.child_window(title="Valores do XML", class_name="Button").wrapper_object().click_input()
+        time.sleep(.5)
         telaImportar.ExportarImportarXmlNfe.child_window(title="Importar Nota de Produtos para Janela de Cadastro", class_name="Button").wrapper_object().click_input()
         time.sleep(.5)
         telaImportar.ExportarImportarXmlNfe.child_window(class_name="Edit").type_keys(caminhoDoArquivo)
@@ -64,7 +66,7 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         time.sleep(1)
 
         # preenchendo informacao do item
-        # preencheItem(idNota) USAR ISTO EM PRODUCAO                 
+        preencheItem(idNota)          
         time.sleep(1)
         importar.importacaoXmlNotaFiscalDeEntrada.child_window(title="OK", class_name="Button").wrapper_object().click_input()
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0, timeout=60)

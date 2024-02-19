@@ -1,5 +1,7 @@
 from sql import sqlPool
+from pywinauto.application import Application
 import pyautogui
+import time
 
 def preencheItem(idNota):
     try:
@@ -7,33 +9,37 @@ def preencheItem(idNota):
                         SELECT 
                             desenho,
                             unidade,
-                            pedido
+                            ZeevIntegration.dbo.ufPreencheZerosField7(pedido) as pedido,
+                            unidade_divergente
                         FROM nfemaster.DWIN_entradaNFeProdutoXML_itens
                         WHERE
                             id_nota = {idNota}
                     """)
         
         for item in itens:
+            itensXml = Application(backend="win32").connect(title="Importação XML Nota Fiscal de Entrada.", timeout=60)
+            main_window = itensXml.top_window()
+            main_window.set_focus()
             desenho =  item[0]
             unidade =  item[1]
             pedido =  item[2]
-            
-            pyautogui.press('TAB')
+            unidade_divergente = item[3]
 
-            # preenchimento de desenho
+            time.sleep(1)
+            pyautogui.press('TAB')
+            time.sleep(1)
             for i in range(7):
                 pyautogui.press('DELETE')
             pyautogui.write(desenho)
-            pyautogui.press('TAB')
+            time.sleep(.5)
 
-            # preenchimento de unidade
-            for i in range(30):
-                pyautogui.press('up')
-            pyautogui.write(unidade)
-            pyautogui.press('TAB')
+            quantidade_tab = 2 if unidade_divergente == '0' else 3
 
-            # preenchimento de pedido
-            # pyautogui.write(pedido) USAR ISSO EM PRODUCAO
-            pyautogui.write('0000000')
+            for i in range(quantidade_tab):
+                pyautogui.press('TAB')
+
+            time.sleep(.5)
+            pyautogui.write(pedido)
+
     except Exception as err:
         raise Exception(f'Erro ao preencher itens: {err}')

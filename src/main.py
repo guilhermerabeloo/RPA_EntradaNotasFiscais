@@ -4,6 +4,7 @@ from rodape import preencheRodape
 from tabulacaoImpostos import tabulaItens
 from entradaDaNota import preenchimentoCapaNota
 from conversaoXml import converteGzipParaXml
+from pywinauto.application import Application
 import warnings
 import json
 import subprocess
@@ -42,7 +43,6 @@ retornoNota = sqlPool('SELECT', f"""
                     , NF.codigo_empresa
                     , NF.cnpj_fornecedor
                     , NF.xml_gzip
-                      
                     , NF.codigo_fornecedor
                     , NF.natureza_operacao
                     , NF.tipo_documento
@@ -56,8 +56,8 @@ retornoNota = sqlPool('SELECT', f"""
                 FROM [nfemaster].[DWIN_entradaNFeProdutoXML] AS NF
                 inner join [BD_MTZ_FOR]..ger_emp AS E ON E.emp_cd = NF.codigo_empresa
                 WHERE
-                        id = 21
-                    --integrado = 'P'
+                    --    id = 24
+                    integrado = 'P'
                 ORDER BY NF.data_insert                  
                 """)
 
@@ -79,6 +79,11 @@ if len(retornoNota):
     }
         
     try: 
+        if dados['natureza'] == 'ERRO AO INTEGRAR! VERIFIQUE SE O NATUREZA CORRESPONDENTE A UF DO DESTINATÁRIO FOI PARAMETRIZADA':
+            raise Exception("ERRO AO INTEGRAR! VERIFIQUE SE O NATUREZA CORRESPONDENTE A UF DO DESTINATÁRIO FOI PARAMETRIZADA")
+        elif dados['natureza'] == 'TIPO DE OPERAÇÃO NÃO PARAMETRIZADA!': 
+            raise Exception('TIPO DE OPERAÇÃO NÃO PARAMETRIZADA!')
+
         logger.info(f'ID {dados["idNota"]} - Realizando login no Dealernet')
         loginDealernet(executavel, empresa, senha)
 
@@ -93,16 +98,19 @@ if len(retornoNota):
 
         logger.info(f'ID {dados["idNota"]} - Realizando tabulacao dos itens')
         tabulaItens(dados['idNota'])
+        app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
+        app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&O", class_name="Button").click_input()
+        time.sleep(30)
 
         sqlPool("INSERT", f"""
-                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'S', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '1'
+                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'I', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '', '1'
         """)
 
         logger.info("=-=-=-=-=-=-=-=-FIM DA EXECUCAO=-=-=-=-=-=-=-=-\n")
         
     except Exception as err:
         sqlPool("INSERT", f"""
-                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'E', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '0'
+                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'E', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '{err}', '0'
         """)
 
         logging.error(f'NOTA {dados['numeroNf']} - ERRO: {err}')

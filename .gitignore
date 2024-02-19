@@ -3,3 +3,4 @@ config.ini
 logsDeErro.log
 logsDeExecucao.log
 __pycache__
+testes.py

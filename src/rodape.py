@@ -50,9 +50,9 @@ def preencheRodape(idNota):
         time.sleep(3)
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&E", class_name="Button").click_input()
         
-        time.sleep(.01)
+        time.sleep(.5)
         pyautogui.press('TAB')
-        time.sleep(.01)
+        time.sleep(.5)
         pyautogui.press('SPACE')
 
         time.sleep(5)
