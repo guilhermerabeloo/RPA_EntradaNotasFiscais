@@ -71,6 +71,14 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         importar.importacaoXmlNotaFiscalDeEntrada.child_window(title="OK", class_name="Button").wrapper_object().click_input()
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0, timeout=60)
 
+        try:
+            atencao = Application(backend="win32").connect(title="Atenção", timeout=5)
+            atencao.Atencao.child_window(title=" O campo NCM do cadastro 84314929 está diferente do XML 40169990  para o Desenho 170299. Será considerado o NBM do XML?", class_name="Edit")
+            time.sleep(2)
+            pyautogui.press('ENTER')
+        except Exception as err:
+            pass
+
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="Conta Gerencial:", class_name="Button").click_input()
         time.sleep(.01)
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[40].click_input()

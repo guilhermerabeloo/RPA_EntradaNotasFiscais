@@ -56,7 +56,7 @@ retornoNota = sqlPool('SELECT', f"""
                 FROM [nfemaster].[DWIN_entradaNFeProdutoXML] AS NF
                 inner join [BD_MTZ_FOR]..ger_emp AS E ON E.emp_cd = NF.codigo_empresa
                 WHERE
-                    --    id = 24
+                    --    id = 28
                     integrado = 'P'
                 ORDER BY NF.data_insert                  
                 """)
