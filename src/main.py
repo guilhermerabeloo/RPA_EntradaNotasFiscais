@@ -4,6 +4,7 @@ from rodape import preencheRodape
 from tabulacaoImpostos import tabulaItens
 from entradaDaNota import preenchimentoCapaNota
 from conversaoXml import converteGzipParaXml
+from confirmacaoDeLancamento import confirmarLancamento
 from pywinauto.application import Application
 import warnings
 import json
@@ -103,10 +104,15 @@ if len(retornoNota):
         print('5 - Tabulacao dos itens da nota')
         logger.info(f'ID {dados["idNota"]} - Realizando tabulacao dos itens')
         tabulaItens(dados['idNota'], logger )
-        app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
-        time.sleep(1)
-        app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&O", class_name="Button").click_input()
-        time.sleep(60)
+
+        print('6 - Confirmando lancamento')
+        logger.info(f'ID {dados["idNota"]} - Realizando confirmacao do lancamento')
+        numeroNe = confirmarLancamento()
+        print(numeroNe)
+        # app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
+        # time.sleep(1)
+        # app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&O", class_name="Button").click_input()
+        # time.sleep(60)
 
         sqlPool("INSERT", f"""
                 EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'I', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '', '1'
