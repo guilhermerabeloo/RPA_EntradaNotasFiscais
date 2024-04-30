@@ -3,7 +3,7 @@ from sql import sqlPool
 import pyautogui
 import time
 
-def tabulaItens(idNota):
+def tabulaItens(idNota, logger):
     try:
         app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
         main_window = app.top_window()
@@ -44,13 +44,28 @@ def tabulaItens(idNota):
                 time.sleep(.2)
                 pyautogui.press('TAB')
 
-            
             time.sleep(2)
             pyautogui.hotkey('alt', 'O')
-            time.sleep(2)
-            pyautogui.hotkey('alt', 'O') #ATIVAR ESSA LINHA EM PRODUCAO
+
             try:
                 telaAtencao = Application(backend="win32").connect(title="Atenção", timeout=5)
+                time.sleep(1)
+
+                telaAtencao.Atencao.child_window(title="Não existe o NBM cadastrado.", class_name="Edit").click_input()
+                pyautogui.press('ENTER')
+                time.sleep(2)
+                pyautogui.hotkey('alt', 'c')
+
+                time.sleep(1)
+            except Exception as e:
+                logger.error(f'NBM não cadastrado para o produto {desenho}')
+                pass
+            time.sleep(2)
+            pyautogui.hotkey('alt', 'O') #ATIVAR ESSA LINHA EM PRODUCAO
+
+            try:
+                telaAtencao = Application(backend="win32").connect(title="Atenção", timeout=5)
+                time.sleep(2)
 
                 infoTelaAtencao = telaAtencao.Atencao.child_window(title="Valor digitado do ICMS não retido pelo Fornecedor difere do Valor calculado. Confirma o valor digitado?", class_name="Edit")
                 if infoTelaAtencao.is_visible():
@@ -60,7 +75,7 @@ def tabulaItens(idNota):
                 pass
             notaAtual = desenho
 
-        for _ in range(6):
+        for _ in range(7):
             time.sleep(.1)
             pyautogui.press('TAB')
         pyautogui.press('SPACE')

@@ -84,23 +84,29 @@ if len(retornoNota):
         elif dados['natureza'] == 'TIPO DE OPERAÇÃO NÃO PARAMETRIZADA!': 
             raise Exception('TIPO DE OPERAÇÃO NÃO PARAMETRIZADA!')
 
+        print('1 - Login no dealernet')
         logger.info(f'ID {dados["idNota"]} - Realizando login no Dealernet')
         loginDealernet(executavel, empresa, senha)
 
+        print('2 - Conversao GZIP')
         logger.info(f'ID {dados["idNota"]} - Realizando conversao de XML')
         nome_arquivo_xml = converteGzipParaXml(dados['gzip'], dados['numeroNf'])
 
+        print('3 - Capa da nota')
         logger.info(f'ID {dados["idNota"]} - Realizando preenchimento da capa da nota')
         preenchimentoCapaNota(nome_arquivo_xml, dados['idNota'], dados['natureza'], dados['tipoDocumento'], dados['departamento'], dados['almoxarifado'])
         
+        print('4 - Rodape da nota')
         logger.info(f'ID {dados["idNota"]} - Realizando preenchimento do rodape')
         preencheRodape(dados['idNota'])
 
+        print('5 - Tabulacao dos itens da nota')
         logger.info(f'ID {dados["idNota"]} - Realizando tabulacao dos itens')
-        tabulaItens(dados['idNota'])
+        tabulaItens(dados['idNota'], logger )
         app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
+        time.sleep(1)
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&O", class_name="Button").click_input()
-        time.sleep(30)
+        time.sleep(60)
 
         sqlPool("INSERT", f"""
                 EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'I', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '', '1'
@@ -113,7 +119,7 @@ if len(retornoNota):
                 EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'E', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '{err}', '0'
         """)
 
-        logging.error(f'NOTA {dados['numeroNf']} - ERRO: {err}')
+        logger.error(f'NOTA {dados['numeroNf']} - ERRO: {err}')
         subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
         time.sleep(7)
         
