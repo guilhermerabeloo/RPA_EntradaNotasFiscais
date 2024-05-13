@@ -35,6 +35,7 @@ def sqlPool(operacao, script):
 
                 return None
         except Exception as err:
+            print(script)
             print(f"Erro ao executar o comando: {err}")
 
     except Exception as err:

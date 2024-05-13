@@ -41,5 +41,16 @@ def preencheItem(idNota):
             time.sleep(.5)
             pyautogui.write(pedido)
 
+            try: 
+                atencao = Application(backend="win32").connect(title="Atenção", timeout=3)
+                texto = atencao.Atencao.children()[0].window_text()
+
+                if "Pedido" in texto:
+                    print('erro no pedido')
+
+                    raise Exception(f'Pedido {pedido} inválido')
+            except:
+                pass
+
     except Exception as err:
         raise Exception(f'Erro ao preencher itens: {err}')

@@ -22,6 +22,7 @@ def tabulaItens(idNota, logger):
             """)
 
         notaAtual = ""
+        cont = 0 
         for item in itens:
             desenho =  item[0]
 
@@ -74,8 +75,10 @@ def tabulaItens(idNota, logger):
             except Exception as e:
                 pass
             notaAtual = desenho
+            cont+=1
 
-        for _ in range(7):
+        rangeTab = 7 if cont > 1 else 6
+        for _ in range(rangeTab):
             time.sleep(.1)
             pyautogui.press('TAB')
         pyautogui.press('SPACE')

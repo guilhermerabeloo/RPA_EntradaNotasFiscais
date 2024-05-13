@@ -134,4 +134,4 @@ def preencheRodape(idNota):
         time.sleep(2)
         pyautogui.hotkey('alt', 'v')
     except Exception as err:
-        raise Exception(f'Erro ao preencher rodapé da nota: {err}')
+        raise Exception(f'Erro ao preencher rodapé da nota')

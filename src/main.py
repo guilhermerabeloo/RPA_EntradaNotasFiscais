@@ -57,8 +57,10 @@ retornoNota = sqlPool('SELECT', f"""
                 FROM [nfemaster].[DWIN_entradaNFeProdutoXML] AS NF
                 inner join [BD_MTZ_FOR]..ger_emp AS E ON E.emp_cd = NF.codigo_empresa
                 WHERE
-                    --    id = 28
+                    --id in ('75')
                     integrado = 'P'
+                    --and id not in ('56', '57', '58')
+                     
                 ORDER BY NF.data_insert                  
                 """)
 
@@ -106,26 +108,26 @@ if len(retornoNota):
         tabulaItens(dados['idNota'], logger )
 
         print('6 - Confirmando lancamento')
+
+        # time.sleep(1000)
+
         logger.info(f'ID {dados["idNota"]} - Realizando confirmacao do lancamento')
         numeroNe = confirmarLancamento()
         print(numeroNe)
-        # app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
-        # time.sleep(1)
-        # app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&O", class_name="Button").click_input()
-        # time.sleep(60)
 
         sqlPool("INSERT", f"""
-                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'I', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '', '1'
+                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'I', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '', '1', '{numeroNe}'
         """)
 
         logger.info("=-=-=-=-=-=-=-=-FIM DA EXECUCAO=-=-=-=-=-=-=-=-\n")
         
     except Exception as err:
+        print(f'excecao {err}')
         sqlPool("INSERT", f"""
-                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'E', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '{err}', '0'
+                EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'E', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '{err}', '0', ''
         """)
 
-        logger.error(f'NOTA {dados['numeroNf']} - ERRO: {err}')
+        logging.error(f'NOTA {dados['numeroNf']} - ERRO: {err}')
         subprocess.run(["powershell", "-Command", "Stop-process -Name ead"], shell=True)
         time.sleep(7)
         
