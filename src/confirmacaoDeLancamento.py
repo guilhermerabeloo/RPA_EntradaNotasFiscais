@@ -1,7 +1,7 @@
 from pywinauto.application import Application
 import time
 
-def confirmarLancamento():
+def confirmarLancamento(TratamentoException):
     try:
         app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
         main_window = app.top_window()
@@ -35,8 +35,17 @@ def confirmarLancamento():
 
         # if erro != '':
         #     raise(f'Erro ao confirmar lancamento: {erro}')
+
+        atencao_app = Application(backend="win32")
+        if atencao_app.connect(title="Atenção", timeout=3, found_index=0):
+            descricao = atencao_app.Atencao.children()[0].window_text()
+
+            if "Difere do Total da Nota" in descricao:
+                raise Exception(f'Total das obrigações difere do total da nota')
+            else:
+                raise TratamentoException(f'Erro ao confirmar lançamento')
         
         return texto
-    except Exception as err:
+    except TratamentoException as err:
         print(f'Erro {err}')
-        raise(f'Erro ao confirmar lancamento')
+        raise TratamentoException(f'Erro ao confirmar lancamento')

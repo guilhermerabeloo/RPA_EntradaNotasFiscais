@@ -79,7 +79,7 @@ def preencheRodape(idNota):
                 'tipoPixQrcode': parcela[18],
                 'qrcoodePix': parcela[19]
             }
-      
+            
             app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[53].click_input()
             time.sleep(2)
             pyautogui.write(tipoObrigacao)

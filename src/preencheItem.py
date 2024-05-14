@@ -3,7 +3,7 @@ from pywinauto.application import Application
 import pyautogui
 import time
 
-def preencheItem(idNota):
+def preencheItem(idNota, TratamentoException):
     try:
         itens = sqlPool("SELECT", f"""
                         SELECT 
@@ -48,9 +48,9 @@ def preencheItem(idNota):
                 if "Pedido" in texto:
                     print('erro no pedido')
 
-                    raise Exception(f'Pedido {pedido} inválido')
+                    raise TratamentoException(f'Pedido {pedido} inválido')
             except:
                 pass
 
-    except Exception as err:
-        raise Exception(f'Erro ao preencher itens: {err}')
+    except TratamentoException as err:
+        raise TratamentoException(f'Erro ao preencher itens: {err}')

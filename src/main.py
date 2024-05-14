@@ -36,6 +36,9 @@ with open("../config/config.json", "r", encoding="utf-8") as file:
     dealernetModulo = sensitive_data['modulosDealernet']['Estoque']
     executavel = dealernetModulo['executavel']
 
+class TratamentoException(Exception):
+    pass
+
 logger.info("=-=-=-=-=-=-=-=-INICIO DA EXECUCAO=-=-=-=-=-=-=-=-")
 retornoNota = sqlPool('SELECT', f"""
                 SELECT TOP 1
@@ -109,11 +112,8 @@ if len(retornoNota):
 
         print('6 - Confirmando lancamento')
 
-        # time.sleep(1000)
-
         logger.info(f'ID {dados["idNota"]} - Realizando confirmacao do lancamento')
-        numeroNe = confirmarLancamento()
-        print(numeroNe)
+        numeroNe = confirmarLancamento(TratamentoException)
 
         sqlPool("INSERT", f"""
                 EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'I', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '', '1', '{numeroNe}'
