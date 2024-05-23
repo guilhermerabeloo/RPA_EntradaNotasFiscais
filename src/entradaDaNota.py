@@ -5,7 +5,7 @@ import pyautogui
 import time
 
 
-def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento, departamento, almoxarifado):
+def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento, departamento, almoxarifado, TratamentoException):
     try:
         # Colocando janela em foco
         app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
@@ -36,7 +36,7 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         telaImportar.ExportarImportarXmlNfe.child_window(class_name="Edit").type_keys(caminhoDoArquivo)
         time.sleep(1)
         telaImportar.ExportarImportarXmlNfe.child_window(title="&Carregar", class_name="Button").wrapper_object().click_input()
-        time.sleep(7)
+        time.sleep(15)
         elementosExportarImportar = telaImportar.ExportarImportarXmlNfe.children()
         elementosExportarImportar[8].double_click()
         time.sleep(.1) 
@@ -66,7 +66,7 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         time.sleep(1)
 
         # preenchendo informacao do item
-        preencheItem(idNota)          
+        preencheItem(idNota, TratamentoException)          
         time.sleep(1)
         importar.importacaoXmlNotaFiscalDeEntrada.child_window(title="OK", class_name="Button").wrapper_object().click_input()
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0, timeout=60)
@@ -89,4 +89,5 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         time.sleep(.01)
         pyautogui.write(' - REALIZADO POR RPA')
     except Exception as err:
+        print(err)
         raise Exception(f'Erro preencher a capa da nota: {err}')

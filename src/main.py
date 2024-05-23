@@ -100,18 +100,17 @@ if len(retornoNota):
 
         print('3 - Capa da nota')
         logger.info(f'ID {dados["idNota"]} - Realizando preenchimento da capa da nota')
-        preenchimentoCapaNota(nome_arquivo_xml, dados['idNota'], dados['natureza'], dados['tipoDocumento'], dados['departamento'], dados['almoxarifado'])
+        preenchimentoCapaNota(nome_arquivo_xml, dados['idNota'], dados['natureza'], dados['tipoDocumento'], dados['departamento'], dados['almoxarifado'], TratamentoException)
         
-        print('4 - Rodape da nota')
-        logger.info(f'ID {dados["idNota"]} - Realizando preenchimento do rodape')
-        preencheRodape(dados['idNota'])
-
-        print('5 - Tabulacao dos itens da nota')
+        print('4 - Tabulacao dos itens da nota')
         logger.info(f'ID {dados["idNota"]} - Realizando tabulacao dos itens')
         tabulaItens(dados['idNota'], logger )
 
-        print('6 - Confirmando lancamento')
+        print('5 - Rodape da nota')
+        logger.info(f'ID {dados["idNota"]} - Realizando preenchimento do rodape')
+        preencheRodape(dados['idNota'])
 
+        print('6 - Confirmando lancamento')
         logger.info(f'ID {dados["idNota"]} - Realizando confirmacao do lancamento')
         numeroNe = confirmarLancamento(TratamentoException)
 

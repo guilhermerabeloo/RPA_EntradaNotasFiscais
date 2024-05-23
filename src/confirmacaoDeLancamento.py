@@ -9,42 +9,30 @@ def confirmarLancamento(TratamentoException):
         time.sleep(1)
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&O", class_name="Button").click_input()
         time.sleep(90)
-        
-        texto = app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[239].window_text()
 
-        # nePreenchida = False
-        # cont = 0 
-        # neLancada = ''
+        janelaAtencaoVisivel = False
+        cont = 0
+        while janelaAtencaoVisivel==False:
+            time.sleep(1)
+            cont+=1
+            if cont > 5:
+                break
 
-        # while nePreenchida == False:
-        #     texto = app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[239].window_text()
-        #     if texto != '':
-        #         nePreenchida = True
-        #         neLancada = texto
+            try:
+                Application(backend="win32").connect(title="Atenção")
+                janelaAtencaoVisivel = True
+            except:
+                pass
 
-        #     try:
-        #         Application(backend="win32").connect(title="Atenção", timeout=0.5)
-        #         erro = 'Erro ao confirmar o lancamento'
-        #         neLancada = ''
-        #         nePreenchida = True
-        #     except:
-        #         pass
-            
-        #     time.sleep(5)
-        #     cont+=1
-
-        # if erro != '':
-        #     raise(f'Erro ao confirmar lancamento: {erro}')
-
-        atencao_app = Application(backend="win32")
-        if atencao_app.connect(title="Atenção", timeout=3, found_index=0):
+        if janelaAtencaoVisivel:
+            atencao_app = Application(backend="win32").connect(title="Atenção")
             descricao = atencao_app.Atencao.children()[0].window_text()
-
             if "Difere do Total da Nota" in descricao:
-                raise Exception(f'Total das obrigações difere do total da nota')
+                raise TratamentoException(f'Total das obrigações difere do total da nota')
             else:
                 raise TratamentoException(f'Erro ao confirmar lançamento')
         
+        texto = app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[239].window_text()
         return texto
     except TratamentoException as err:
         print(f'Erro {err}')
