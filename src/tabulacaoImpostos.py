@@ -3,7 +3,7 @@ from sql import sqlPool
 import pyautogui
 import time
 
-def tabulaItens(idNota, logger):
+def tabulaItens(idNota, logger, TratamentoException):
     try:
         app = Application(backend="win32").connect(class_name="FNWND3115", timeout=60)
         main_window = app.top_window()
@@ -62,7 +62,28 @@ def tabulaItens(idNota, logger):
                 logger.error(f'NBM não cadastrado para o produto {desenho}')
                 pass
             time.sleep(2)
-            pyautogui.hotkey('alt', 'O') #ATIVAR ESSA LINHA EM PRODUCAO
+
+            janelaAtencaoVisivel = False
+            contAux = 0
+            while janelaAtencaoVisivel==False:
+                time.sleep(1)
+                contAux+=1
+                if contAux > 3:
+                    break
+
+                try:
+                    Application(backend="win32").connect(title="Redução Base Cálculo")
+                    janelaAtencaoVisivel = True
+                except:
+                    pass
+
+            if janelaAtencaoVisivel:
+                atencao_app = Application(backend="win32").connect(title="Redução Base Cálculo")
+                descricao = atencao_app.ReducaoBaseCalculo.children()[0].window_text()
+                if "Valor de Redução da Base de Cálculo do ICMS inválido" in descricao:
+                    raise TratamentoException(f'Erro na natureza de operação: Redução da BC do ICMS inválida')
+
+            pyautogui.hotkey('alt', 'O')
 
             try:
                 telaAtencao = Application(backend="win32").connect(title="Atenção", timeout=5)
@@ -82,5 +103,5 @@ def tabulaItens(idNota, logger):
             time.sleep(.1)
             pyautogui.press('TAB')
         pyautogui.press('SPACE')
-    except Exception as err:
-        raise Exception(f'Erro ao tabular impostos: {err}')
+    except TratamentoException as err:
+        raise TratamentoException(err)

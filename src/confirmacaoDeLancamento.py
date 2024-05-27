@@ -29,6 +29,8 @@ def confirmarLancamento(TratamentoException):
             descricao = atencao_app.Atencao.children()[0].window_text()
             if "Difere do Total da Nota" in descricao:
                 raise TratamentoException(f'Total das obrigações difere do total da nota')
+            elif "TABELA DE TIPOS DE PRODUTOS" in descricao:
+                raise TratamentoException(f'Há erros no cadastro de um ou mais produtos')
             else:
                 raise TratamentoException(f'Erro ao confirmar lançamento')
         
@@ -36,4 +38,4 @@ def confirmarLancamento(TratamentoException):
         return texto
     except TratamentoException as err:
         print(f'Erro {err}')
-        raise TratamentoException(f'Erro ao confirmar lancamento')
+        raise TratamentoException(err)

@@ -104,7 +104,7 @@ if len(retornoNota):
         
         print('4 - Tabulacao dos itens da nota')
         logger.info(f'ID {dados["idNota"]} - Realizando tabulacao dos itens')
-        tabulaItens(dados['idNota'], logger )
+        tabulaItens(dados['idNota'], logger, TratamentoException)
 
         print('5 - Rodape da nota')
         logger.info(f'ID {dados["idNota"]} - Realizando preenchimento do rodape')
