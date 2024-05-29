@@ -71,13 +71,18 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         importar.importacaoXmlNotaFiscalDeEntrada.child_window(title="OK", class_name="Button").wrapper_object().click_input()
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="&S", class_name="Button", found_index=0, timeout=60)
 
-        try:
-            atencao = Application(backend="win32").connect(title="Atenção", timeout=5)
-            atencao.Atencao.child_window(title=" O campo NCM do cadastro 84314929 está diferente do XML 40169990  para o Desenho 170299. Será considerado o NBM do XML?", class_name="Edit")
-            time.sleep(2)
-            pyautogui.press('ENTER')
-        except Exception as err:
-            pass
+        janelaAtencaoAtiva = False
+        while janelaAtencaoAtiva==False:
+            time.sleep(3)
+
+            try:
+                atencao_app = Application(backend="win32").connect(title="Atenção", timeout=2)
+                descricao = atencao_app.Atencao.children()[0].window_text()
+                if "Será considerado o NBM do XML?" in descricao:
+                    pyautogui.press('ENTER')
+            except:
+                janelaAtencaoAtiva = True
+
 
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="Conta Gerencial:", class_name="Button").click_input()
         time.sleep(.01)
@@ -89,5 +94,4 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         time.sleep(.01)
         pyautogui.write(' - REALIZADO POR RPA')
     except Exception as err:
-        print(err)
         raise Exception(f'Erro preencher a capa da nota: {err}')

@@ -108,7 +108,7 @@ if len(retornoNota):
 
         print('5 - Rodape da nota')
         logger.info(f'ID {dados["idNota"]} - Realizando preenchimento do rodape')
-        preencheRodape(dados['idNota'])
+        preencheRodape(dados['idNota'], TratamentoException)
 
         print('6 - Confirmando lancamento')
         logger.info(f'ID {dados["idNota"]} - Realizando confirmacao do lancamento')

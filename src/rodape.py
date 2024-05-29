@@ -4,7 +4,7 @@ from sql import sqlPool
 import pyautogui
 import time
 
-def preencheRodape(idNota):
+def preencheRodape(idNota, TratamentoException):
     try:
         parcelas = sqlPool("SELECT", f"""
                 SELECT 
@@ -97,6 +97,28 @@ def preencheRodape(idNota):
             pyautogui.write(valor)
             time.sleep(.5) 
             pyautogui.press('TAB')
+
+            # prevendo janela de atancao com valor da obrigacao divergente
+            janelaAtencaoVisivel = False
+            cont = 0
+            while janelaAtencaoVisivel==False:
+                time.sleep(1)
+                cont+=1
+                if cont > 5:
+                    break
+
+                try:
+                    Application(backend="win32").connect(title="Atenção")
+                    janelaAtencaoVisivel = True
+                except:
+                    pass
+
+            if janelaAtencaoVisivel:
+                atencao_app = Application(backend="win32").connect(title="Atenção")
+                descricao = atencao_app.Atencao.children()[0].window_text()
+                if "Valor da Obrigação é maior do que" in descricao:
+                    raise TratamentoException(f'Valor da obrigação divergente com o valor da nota')
+                
             time.sleep(.5) 
             pyautogui.press('TAB')
             time.sleep(.5) 
@@ -133,5 +155,5 @@ def preencheRodape(idNota):
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[29].click_input()
         time.sleep(2)
         pyautogui.hotkey('alt', 'v')
-    except Exception as err:
-        raise Exception(f'Erro ao preencher rodapé da nota')
+    except TratamentoException as err:
+        raise TratamentoException(err)
