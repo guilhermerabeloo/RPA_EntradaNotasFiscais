@@ -31,6 +31,8 @@ def confirmarLancamento(TratamentoException):
                 raise TratamentoException(f'Total das obrigações difere do total da nota')
             elif "TABELA DE TIPOS DE PRODUTOS" in descricao:
                 raise TratamentoException(f'Há erros no cadastro de um ou mais produtos')
+            elif "TABELA DE GRUPO DE MATERIAIS" in descricao:
+                raise TratamentoException(f'Há erros no cadastro de grupos de materiais')
             else:
                 raise TratamentoException(f'Erro ao confirmar lançamento')
         
