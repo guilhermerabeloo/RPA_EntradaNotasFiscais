@@ -103,5 +103,14 @@ def tabulaItens(idNota, logger, TratamentoException):
             time.sleep(.1)
             pyautogui.press('TAB')
         pyautogui.press('SPACE')
+
+        janelaRateioIcms = app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()[3].window_text()
+        if janelaRateioIcms == 'Rateio do ICMS Retido (w_ead_nfep_rateio)':
+            pyautogui.hotkey('ALT', 'C')
+            for _ in range(6):
+                time.sleep(.1)
+                pyautogui.press('TAB')
+            pyautogui.press('SPACE')
+            
     except TratamentoException as err:
         raise TratamentoException(err)
