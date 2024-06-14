@@ -1,6 +1,7 @@
 from pywinauto.application import Application
 from preencheItem import preencheItem
 from searchSelect import selecionaOptionSelect
+from util import formataDepartamento
 import pyautogui
 import time
 
@@ -53,7 +54,7 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         pyautogui.press('TAB')
         time.sleep(.5)
         campoDepartamento = telaImportar.ExportarImportarXmlNfe.children()[13]
-        selecionaOptionSelect(campoDepartamento, departamento)
+        selecionaOptionSelect(campoDepartamento, formataDepartamento(departamento))
         time.sleep(.5)
         pyautogui.write(almoxarifado)
         time.sleep(.5)
@@ -80,9 +81,10 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
                 descricao = atencao_app.Atencao.children()[0].window_text()
                 if "Será considerado o NBM do XML?" in descricao:
                     pyautogui.press('ENTER')
+                elif "Existem mais de um fornecedor cadastrado no sistema com o CNPJ" in descricao:
+                    pyautogui.press('ENTER')
             except:
                 janelaAtencaoAtiva = True
-
 
         app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.child_window(title="Conta Gerencial:", class_name="Button").click_input()
         time.sleep(.01)

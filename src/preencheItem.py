@@ -33,12 +33,16 @@ def preencheItem(idNota, TratamentoException):
             pyautogui.write(desenho)
             time.sleep(.5)
 
-            quantidade_tab = 2 if unidade_divergente == '0' else 3
+            quantidade_tab = 1 if unidade_divergente == '0' else 2
 
             for i in range(quantidade_tab):
+                time.sleep(1)
                 pyautogui.press('TAB')
 
             time.sleep(.5)
+            pyautogui.write(unidade)
+            pyautogui.press('TAB')
+            time.sleep(1)
             pyautogui.write(pedido)
 
             janelaAtencaoVisivel = False

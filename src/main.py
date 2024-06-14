@@ -5,7 +5,7 @@ from tabulacaoImpostos import tabulaItens
 from entradaDaNota import preenchimentoCapaNota
 from conversaoXml import converteGzipParaXml
 from confirmacaoDeLancamento import confirmarLancamento
-from pywinauto.application import Application
+from InstanciaZeev import criaInstancia
 import warnings
 import json
 import subprocess
@@ -57,10 +57,11 @@ retornoNota = sqlPool('SELECT', f"""
                     , NF.data_insert
                     , NF.integracao_erro
                     , REPLACE(E.emp_ds, 'LUIS', 'LUÍS') AS Empresa
+                    , NF.dep_cd
                 FROM [nfemaster].[DWIN_entradaNFeProdutoXML] AS NF
                 inner join [BD_MTZ_FOR]..ger_emp AS E ON E.emp_cd = NF.codigo_empresa
                 WHERE
-                    --id in ('75')
+                    --id in ('283')
                     integrado = 'P'
                     --and id not in ('56', '57', '58')
                      
@@ -81,7 +82,9 @@ if len(retornoNota):
         'natureza': nota[6],
         'tipoDocumento': nota[7],
         'departamento': nota[8],
-        'almoxarifado': nota[9]
+        'almoxarifado': nota[9],
+        'codDep': nota[15],
+        'codEmp': nota[2]
     }
         
     try: 
@@ -119,8 +122,11 @@ if len(retornoNota):
                 EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'I', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '', '1', '{numeroNe}'
         """)
 
+        print('7 - Criando instância no Zeev')
+        logger.info(f'ID {dados["idNota"]} - Criando instancia no Zeev')
+        criaInstancia(dados['codEmp'], dados['codDep'], dados['idNota'])
+
         logger.info("=-=-=-=-=-=-=-=-FIM DA EXECUCAO=-=-=-=-=-=-=-=-\n")
-        
     except Exception as err:
         print(f'excecao {err}')
         sqlPool("INSERT", f"""
