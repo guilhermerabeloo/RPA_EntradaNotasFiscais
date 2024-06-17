@@ -54,11 +54,32 @@ def preencheRodape(idNota, TratamentoException):
         pyautogui.press('TAB')
         time.sleep(.5)
         pyautogui.press('SPACE')
+        time.sleep(2)
 
+        janelaRodapeVisivel = True
+        while janelaRodapeVisivel:
+            time.sleep(.5)
+            pyautogui.press('E')
+            try:
+                atencao_app1 = Application(backend="win32").connect(title="Atenção", timeout=3)
+                descricao1 = atencao_app1.Atencao.children()[0].window_text()
+
+                if "Confirma Exclusão" in descricao1:
+                    time.sleep(.5)
+                    pyautogui.press('ENTER')
+
+            except:
+                janelaRodapeVisivel = False
+
+        elementsRodape = app.AdministracaoDeEstoqueEmpresaUsuarioAutomacao.children()
+        valorTotalWindow = elementsRodape[9].window_text().replace('.', '')
+
+        pyautogui.hotkey('ALT', 'I')
         time.sleep(5)
 
         for parcela in parcelas:
-            valor = parcela[1]
+            # valor = parcela[1]
+            valor = valorTotalWindow
             vencimento = parcela[2]
             tipoObrigacao = parcela[3]
             moedaCorrecao = parcela[4]

@@ -32,8 +32,20 @@ def preencheItem(idNota, TratamentoException):
                 pyautogui.press('DELETE')
             pyautogui.write(desenho)
             time.sleep(.5)
+            pyautogui.press('TAB')
 
-            quantidade_tab = 1 if unidade_divergente == '0' else 2
+            try:
+                atencao_app = Application(backend="win32").connect(title="Atenção", timeout=3)
+                descricao = atencao_app.Atencao.children()[0].window_text()
+
+                if 'Item Obsoleto - Política Especial' in descricao:
+                    pyautogui.press('ENTER')
+            except:
+                pass
+
+            time.sleep(.5)
+
+            quantidade_tab = 0 if unidade_divergente == '0' else 1
 
             for i in range(quantidade_tab):
                 time.sleep(1)

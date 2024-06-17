@@ -27,14 +27,14 @@ def confirmarLancamento(TratamentoException):
         if janelaAtencaoVisivel:
             atencao_app = Application(backend="win32").connect(title="Atenção")
             descricao = atencao_app.Atencao.children()[0].window_text()
-            print(descricao)
+        
             if "Difere do Total da Nota" in descricao:
                 raise TratamentoException(f'Total das obrigações difere do total da nota')
             elif "TABELA DE TIPOS DE PRODUTOS" in descricao:
                 raise TratamentoException(f'Há erros no cadastro de um ou mais produtos')
             elif "TABELA DE GRUPO DE MATERIAIS" in descricao:
                 raise TratamentoException(f'Há erros no cadastro de grupos de materiais')
-            elif "Nota Fiscal já Cadastrada para este Fornecedor!" in descricao:
+            elif "Cadastrada para este Fornecedor!" in descricao:
                 raise TratamentoException(f'Nota fiscal já lançada')
             else:
                 raise TratamentoException(f'Erro ao confirmar lançamento')
