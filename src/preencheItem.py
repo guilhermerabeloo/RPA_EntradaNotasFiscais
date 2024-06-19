@@ -1,5 +1,6 @@
 from sql import sqlPool
 from pywinauto.application import Application
+from util import clicarEmImagem
 import pyautogui
 import time
 
@@ -16,23 +17,21 @@ def preencheItem(idNota, TratamentoException):
                             id_nota = {idNota}
                     """)
         
-        for item in itens:
-            itensXml = Application(backend="win32").connect(title="Importação XML Nota Fiscal de Entrada.", timeout=60)
-            main_window = itensXml.top_window()
-            main_window.set_focus()
-            desenho =  item[0]
-            unidade =  item[1]
-            pedido =  item[2]
-            unidade_divergente = item[3]
+        itensXml = Application(backend="win32").connect(title="Importação XML Nota Fiscal de Entrada.", timeout=60)
+        main_window = itensXml.top_window()
+        main_window.set_focus()
 
-            time.sleep(1)
-            pyautogui.press('TAB')
-            time.sleep(1)
-            for i in range(7):
+        time.sleep(1)
+        pyautogui.press('TAB')
+        time.sleep(1)
+
+        for desenho in itens:
+            desenhoCurrent = desenho[0]
+
+            for _ in range(7):
                 pyautogui.press('DELETE')
-            pyautogui.write(desenho)
+            pyautogui.write(desenhoCurrent)
             time.sleep(.5)
-            pyautogui.press('TAB')
 
             try:
                 atencao_app = Application(backend="win32").connect(title="Atenção", timeout=3)
@@ -43,26 +42,29 @@ def preencheItem(idNota, TratamentoException):
             except:
                 pass
 
+            pyautogui.press('down')
             time.sleep(.5)
 
-            quantidade_tab = 0 if unidade_divergente == '0' else 1
+        imagemUnidade = 'C:\\Users\\automacao\\Documents\\RPA_python\\RPA_EntradaNotasFiscais\\assets\\unidade.png'
+        clicarEmImagem(imagemUnidade, 0)
+        time.sleep(.5)
+        pyautogui.press('TAB')
+        time.sleep(.5)
 
-            for i in range(quantidade_tab):
-                time.sleep(1)
-                pyautogui.press('TAB')
+        for pedido in itens:
+            pedidoCurrent = pedido[2]
 
+            pyautogui.write(pedidoCurrent)
             time.sleep(.5)
-            pyautogui.write(unidade)
-            pyautogui.press('TAB')
-            time.sleep(1)
-            pyautogui.write(pedido)
+            pyautogui.press('down')
+            time.sleep(.5)
 
             janelaAtencaoVisivel = False
             cont = 0
             while janelaAtencaoVisivel==False:
                 time.sleep(1)
                 cont+=1
-                if cont > 5:
+                if cont > 3:
                     break
 
                 try:
@@ -76,6 +78,22 @@ def preencheItem(idNota, TratamentoException):
                 descricao = atencao_app.Atencao.children()[0].window_text()
                 if "Produto não está presente no pedido" in descricao:
                     raise TratamentoException(f'Pedido inválido')
+
+        imagemSistema = 'C:\\Users\\automacao\\Documents\\RPA_python\\RPA_EntradaNotasFiscais\\assets\\sistema.png'
+        clicarEmImagem(imagemSistema, 0)
+        time.sleep(.5)
+        clicarEmImagem(imagemUnidade, 0)
+        time.sleep(.5)
+
+        for unidade in itens:
+            unidadeCurrent = unidade[1]
+
+            pyautogui.write(unidadeCurrent)
+            time.sleep(.5)
+            pyautogui.press('enter')
+            time.sleep(.5)
+
+        time.sleep(1)
 
     except TratamentoException as err:
         raise TratamentoException(f'Erro ao preencher itens: {err}')

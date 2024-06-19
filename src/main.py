@@ -61,7 +61,7 @@ retornoNota = sqlPool('SELECT', f"""
                 FROM [nfemaster].[DWIN_entradaNFeProdutoXML] AS NF
                 inner join [BD_MTZ_FOR]..ger_emp AS E ON E.emp_cd = NF.codigo_empresa
                 WHERE
-                    --id in ('286')
+                    --id in ('313')
                     integrado = 'P'
                     --and id not in ('56', '57', '58')
                      

@@ -54,12 +54,22 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         pyautogui.press('TAB')
         time.sleep(.5)
         campoDepartamento = telaImportar.ExportarImportarXmlNfe.children()[13]
-        selecionaOptionSelect(campoDepartamento, formataDepartamento(departamento))
+        # selecionaOptionSelect(campoDepartamento, formataDepartamento(departamento))
+        selecionaOptionSelect(campoDepartamento, departamento)
         time.sleep(.5)
         pyautogui.write(almoxarifado)
         time.sleep(.5)
 
         telaImportar.ExportarImportarXmlNfe.child_window(title="&Importar", class_name="Button").wrapper_object().click_input()
+
+        try:
+            atencao_app1 = Application(backend="win32").connect(title="Atenção", timeout=3)
+            descricao1 = atencao_app1.Atencao.children()[0].window_text()
+        
+            if "não disponível para a Empresa" in descricao1:
+                raise TratamentoException(f'Natureza de operação não disponivel para a empresa')
+        except:
+            pass
 
         importar = Application(backend="win32").connect(title="Importação XML Nota Fiscal de Entrada.", timeout=60)
         importar_window = importar.top_window()

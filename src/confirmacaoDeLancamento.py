@@ -36,6 +36,8 @@ def confirmarLancamento(TratamentoException):
                 raise TratamentoException(f'Há erros no cadastro de grupos de materiais')
             elif "Cadastrada para este Fornecedor!" in descricao:
                 raise TratamentoException(f'Nota fiscal já lançada')
+            elif "Nat. de Operação [INFE] Não Pode ser Utilizada para esse Fornecedor. Verifique o Cadastro de Fornecedores e as Config. de Nat. operação" in descricao:
+                raise TratamentoException(f'Natureza de operação INFE não habilitada para o fornecedor')
             else:
                 raise TratamentoException(f'Erro ao confirmar lançamento')
         
