@@ -122,9 +122,9 @@ if len(retornoNota):
                 EXEC nfemaster.DWIN_insere_log_entradaNFe '{dados['idNota']}', 'I', '{codEmpresa}', '{dados['codFornecedor']}', '{dados['numeroNf']}', '', '1', '{numeroNe}'
         """)
 
-        print('7 - Criando instância no Zeev')
-        logger.info(f'ID {dados["idNota"]} - Criando instancia no Zeev')
-        criaInstancia(dados['codEmp'], dados['codDep'], dados['idNota'])
+        # print('7 - Criando instância no Zeev')
+        # logger.info(f'ID {dados["idNota"]} - Criando instancia no Zeev')
+        # criaInstancia(dados['codEmp'], dados['codDep'], dados['idNota'])
 
         logger.info("=-=-=-=-=-=-=-=-FIM DA EXECUCAO=-=-=-=-=-=-=-=-\n")
     except Exception as err:

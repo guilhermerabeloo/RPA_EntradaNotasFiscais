@@ -34,7 +34,7 @@ def preencheItem(idNota, TratamentoException):
             time.sleep(.5)
 
             try:
-                atencao_app = Application(backend="win32").connect(title="Atenção", timeout=3)
+                atencao_app = Application(backend="win32").connect(title="Atenção", timeout=1.5)
                 descricao = atencao_app.Atencao.children()[0].window_text()
 
                 if 'Item Obsoleto - Política Especial' in descricao:
@@ -44,6 +44,11 @@ def preencheItem(idNota, TratamentoException):
 
             pyautogui.press('down')
             time.sleep(.5)
+
+        quantidadeItens = len(itens)
+        for _ in range(quantidadeItens):
+            pyautogui.press('up')
+            time.sleep(.1)
 
         imagemUnidade = 'C:\\Users\\automacao\\Documents\\RPA_python\\RPA_EntradaNotasFiscais\\assets\\unidade.png'
         clicarEmImagem(imagemUnidade, 0)
@@ -64,7 +69,7 @@ def preencheItem(idNota, TratamentoException):
             while janelaAtencaoVisivel==False:
                 time.sleep(1)
                 cont+=1
-                if cont > 3:
+                if cont > 2:
                     break
 
                 try:
@@ -79,6 +84,11 @@ def preencheItem(idNota, TratamentoException):
                 if "Produto não está presente no pedido" in descricao:
                     raise TratamentoException(f'Pedido inválido')
 
+        quantidadeItens = len(itens)
+        for _ in range(quantidadeItens):
+            pyautogui.press('up')
+            time.sleep(.1)
+            
         imagemSistema = 'C:\\Users\\automacao\\Documents\\RPA_python\\RPA_EntradaNotasFiscais\\assets\\sistema.png'
         clicarEmImagem(imagemSistema, 0)
         time.sleep(.5)

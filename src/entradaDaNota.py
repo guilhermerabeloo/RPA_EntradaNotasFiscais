@@ -54,8 +54,7 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
         pyautogui.press('TAB')
         time.sleep(.5)
         campoDepartamento = telaImportar.ExportarImportarXmlNfe.children()[13]
-        # selecionaOptionSelect(campoDepartamento, formataDepartamento(departamento))
-        selecionaOptionSelect(campoDepartamento, departamento)
+        selecionaOptionSelect(campoDepartamento, formataDepartamento(departamento))
         time.sleep(.5)
         pyautogui.write(almoxarifado)
         time.sleep(.5)
@@ -90,6 +89,8 @@ def preenchimentoCapaNota(caminhoDoArquivo, idNota, naturezaOperacao, documento,
                 atencao_app = Application(backend="win32").connect(title="Atenção", timeout=2)
                 descricao = atencao_app.Atencao.children()[0].window_text()
                 if "Será considerado o NBM do XML?" in descricao:
+                    pyautogui.press('ENTER')
+                elif "Será considerado o NBM atual do cadastro do produto" in descricao:
                     pyautogui.press('ENTER')
                 elif "Existem mais de um fornecedor cadastrado no sistema com o CNPJ" in descricao:
                     pyautogui.press('ENTER')
